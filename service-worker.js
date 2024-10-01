@@ -1,8 +1,8 @@
-const CACHE_NAME = 'temporizador-cache-v3'; 
+const CACHE_NAME = 'entrenamiento-cache-v3'; 
 const urlsToCache = [
   '',
   '/',
-  'manifest.json', // Asegúrate de que este archivo esté presente
+  'manifest.json', 
   'https://i.imgur.com/St2wFsJ.png'
 ];
 
@@ -17,11 +17,23 @@ self.addEventListener('install', event => {
 
 // Interceptar las solicitudes de red para devolver contenido de la caché
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
+  if (event.request.method === 'GET') {
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        return response || fetch(event.request).then(networkResponse => {
+          // Clonamos la respuesta para que podamos almacenarla en caché
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone); // Solo almacenamos respuestas GET
+          });
+          return networkResponse; // Retornamos la respuesta de la red
+        });
+      })
+    );
+  } else {
+    // Para otros métodos (como POST), simplemente hacemos la solicitud
+    event.respondWith(fetch(event.request));
+  }
 });
 
 // Actualizar el caché cuando hay nuevos recursos
