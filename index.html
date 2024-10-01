@@ -1,181 +1,4 @@
-<html><head><base href="https://temporizador.pages.dev/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" sizes="192x192" href="https://revennnz.github.io/imgx/temporizador/icon192x192.png" type="image/x-icon"/>
-    <link rel="shortcut icon" href="https://revennnz.github.io/imgx/temporizador/icon512x512.png" type="image/x-icon"/>
-    <link rel="apple-touch-icon" href="https://revennnz.github.io/imgx/temporizador/icon512x512.png" type="image/x-icon"/>
-    <link rel="manifest" href="manifest.json">
-    <title>Temporizador de Entrenamiento</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 10px;
-        box-sizing: border-box;
-        transition: background-color 0.3s, color 0.3s;
-    }
-    body.dark-mode {
-        background-color: #222;
-        color: #fff;
-    }
-    .timer-container {
-        background-color: white;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        transition: background-color 0.3s, color 0.3s;
-        max-width: 100%;
-        width: 100%;
-    }
-    .dark-mode .timer-container {
-        background-color: #333;
-        color: #fff;
-    }
-    .timer {
-        font-size: 36px;
-        margin: 20px 0;
-    }
-    .controls button {
-        font-size: 14px;
-        padding: 8px 16px;
-        margin: 5px;
-        cursor: pointer;
-        min-width: 80px; /* Ensure consistent button width */
-    }
-    .timer-list {
-        margin-top: 20px;
-        width: 100%;
-    }
-    .timer-item {
-        background-color: #f0f0f0;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        text-align: left;
-    }
-    .timer-item.selected {
-        background-color: #d0d0d0;
-    }
-    .dark-mode .timer-item {
-        background-color: #444;
-    }
-    .dark-mode .timer-item.selected {
-        background-color: #555;
-    }
-    .timer-item-controls {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-top: 5px;
-    }
-    .timer-item-controls input,
-    .timer-item-controls span {
-        margin: 5px 0;
-    }
-    .add-timer {
-        margin-top: 10px;
-    }
-    #darkModeToggle {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .timer-title {
-        font-size: 20px;
-        margin-bottom: 10px;
-    }
-    .remove-timer {
-        color: red;
-        cursor: pointer;
-    }
-    .repetition-count {
-        font-size: 18px;
-        margin-top: 10px;
-    }
-    .add-timer-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 20px;
-    }
-    .add-timer-form input {
-        width: 100%;
-        max-width: 300px;
-        margin: 5px 0;
-        padding: 5px;
-    }
-    #clearAllTimersBtn {
-        margin-top: 10px;
-        background-color: #ff4444;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    #clearAllTimersBtn:hover {
-        background-color: #cc0000;
-    }
-
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 24px;
-        }
-        .timer-title {
-            font-size: 20px;
-        }
-        .timer {
-            font-size: 32px;
-        }
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .controls button {
-            flex: 1 0 40%;
-            margin: 5px;
-        }
-        .timer-item-controls input {
-            width: 100%;
-            max-width: none;
-        }
-    }
-</style></head><body>
-    <div id="darkModeToggle">🌓</div>
-    <div class="timer-container">
-        <h1>Temporizador Entrenamientos</h1>
-        <div class="timer-title" id="timerTitle">Sin temporizador seleccionado</div>
-        <div class="timer" id="timer">00:00</div>
-        <div class="repetition-count" id="repetitionCount">0/0</div>
-        <div class="controls">
-            <button id="previousBtn" disabled="">Anterior</button>
-            <button id="startPauseBtn" disabled="">Iniciar</button>
-            <button id="nextBtn" disabled="">Siguiente</button>
-            <button id="resetBtn" disabled="">Reiniciar</button>
-        </div>
-        <button id="clearAllTimersBtn">Borrar Todos los Temporizadores</button>
-        <div class="timer-list" id="timerList">
-            <h2>Temporizers</h2>
-            <div id="timerItems"></div>
-        </div>
-        <div class="add-timer-form">
-            <input type="text" id="newTimerName" placeholder="Nombre del temporizador">
-            <input type="number" id="newTimerTrainingTime" placeholder="Tiempo de entrenamiento (seg)" value="60">
-            <input type="number" id="newTimerRestTime" placeholder="Tiempo de descanso (seg)" value="40">
-            <button id="addTimerBtn">Agregar Temporizador</button>
-        </div>
-    </div>
-
-    <script>
-        let timers = [];
+<html><head><base href="https://temporizador.pages.dev/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" sizes="192x192" href="https://revennnz.github.io/imgx/temporizador/icon192x192.png" type="image/x-icon"><link rel="shortcut icon" href="https://revennnz.github.io/imgx/temporizador/icon512x512.png" type="image/x-icon"><link rel="apple-touch-icon" href="https://revennnz.github.io/imgx/temporizador/icon512x512.png" type="image/x-icon"><link rel="manifest" href="manifest.json"><title>Temporizador de Entrenamiento</title><style>body{font-family:Arial,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:10px;box-sizing:border-box;transition:background-color .3s,color .3s}body.dark-mode{background-color:#222;color:#fff}.timer-container{background-color:#fff;border-radius:10px;padding:10px;box-shadow:0 4px 6px rgba(0,0,0,.1);text-align:center;transition:background-color .3s,color .3s;max-width:100%;width:100%}.dark-mode .timer-container{background-color:#333;color:#fff}.timer{font-size:36px;margin:20px 0}.controls button{font-size:14px;padding:8px 16px;margin:5px;cursor:pointer;min-width:80px}.timer-list{margin-top:20px;width:100%}.timer-item{background-color:#f0f0f0;border-radius:5px;padding:15px;margin-bottom:10px;cursor:pointer;text-align:left}.timer-item.selected{background-color:#d0d0d0}.dark-mode .timer-item{background-color:#444}.dark-mode .timer-item.selected{background-color:#555}.timer-item-controls{display:flex;flex-direction:column;align-items:flex-start;margin-top:5px}.timer-item-controls input,.timer-item-controls span{margin:5px 0}.add-timer{margin-top:10px}#darkModeToggle{position:absolute;top:10px;right:10px;font-size:24px;cursor:pointer}.timer-title{font-size:20px;margin-bottom:10px}.remove-timer{color:red;cursor:pointer}.repetition-count{font-size:18px;margin-top:10px}.add-timer-form{display:flex;flex-direction:column;align-items:center;margin-top:20px}.add-timer-form input{width:100%;max-width:300px;margin:5px 0;padding:5px}#clearAllTimersBtn{margin-top:10px;background-color:#f44;color:#fff;border:none;padding:10px 20px;border-radius:5px;cursor:pointer}#clearAllTimersBtn:hover{background-color:#c00}.countdown{font-size:24px;margin:10px 0;font-weight:700}@media (max-width:600px){h1{font-size:24px}.timer-title{font-size:20px}.timer{font-size:32px}.controls{display:flex;flex-wrap:wrap;justify-content:center}.controls button{flex:1 0 40%;margin:5px}.timer-item-controls input{width:100%;max-width:none}.countdown{font-size:20px}}</style></head><body><div id="darkModeToggle">🌓</div><div class="timer-container"><h1>Temporizador Entrenamientos</h1><div class="countdown" id="countdown" style="display:none">Preparando:<span id="countdownTime">10</span></div><div id="mainTimer" style="display:block"><div class="timer-title" id="timerTitle">Sin temporizador seleccionado</div><div class="timer" id="timer">00:00</div><div class="repetition-count" id="repetitionCount">0/0</div></div><div class="controls"><button id="previousBtn" disabled="">Anterior</button><button id="startPauseBtn" disabled="">Iniciar</button><button id="nextBtn" disabled="">Siguiente</button><button id="resetBtn" disabled="">Reiniciar</button></div><button id="clearAllTimersBtn">Borrar Todos los Temporizadores</button><div class="timer-list" id="timerList"><h2>Temporizers</h2><div id="timerItems"></div></div><div class="add-timer-form"><input type="text" id="newTimerName" placeholder="Nombre del temporizador"> <input type="number" id="newTimerTrainingTime" placeholder="Tiempo de entrenamiento (seg)" value="60"> <input type="number" id="newTimerRestTime" placeholder="Tiempo de descanso (seg)" value="40"> <input type="number" id="newTimerPreparationTime" placeholder="Tiempo de preparación (seg)" value="10"><button id="addTimerBtn">Agregar Temporizador</button></div></div><script>let timers = [];
         let selectedTimerId = null;
         let timeLeft = 0;
         let timerInterval;
@@ -183,6 +6,8 @@
         let currentRepetition = 0;
         let totalRepetitions = 1;
         let currentPhase = 'training';
+        let preparationTime = 10;
+        let isPreparationPhase = false;
 
         const timerElement = document.getElementById('timer');
         const timerTitleElement = document.getElementById('timerTitle');
@@ -194,6 +19,7 @@
         const newTimerName = document.getElementById('newTimerName');
         const newTimerTrainingTime = document.getElementById('newTimerTrainingTime');
         const newTimerRestTime = document.getElementById('newTimerRestTime');
+        const newTimerPreparationTime = document.getElementById('newTimerPreparationTime');
         const clearAllTimersBtn = document.getElementById('clearAllTimersBtn');
         const previousBtn = document.getElementById('previousBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -229,9 +55,11 @@
 
         function updateTimerDisplay() {
             if (selectedTimerId === null) {
+                document.getElementById('mainTimer').style.display = 'block';
                 timerElement.textContent = '00:00';
                 timerTitleElement.textContent = 'Sin temporizador seleccionado';
                 document.getElementById('repetitionCount').textContent = '0/0';
+                document.getElementById('countdown').style.display = 'none';
                 return;
             }
 
@@ -239,8 +67,17 @@
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            timerTitleElement.textContent = `${selectedTimer.name} - ${currentPhase === 'training' ? 'Entrenamiento' : 'Descanso'}`;
-            document.getElementById('repetitionCount').textContent = `${currentRepetition}/${totalRepetitions}`;
+            
+            if (isPreparationPhase) {
+                document.getElementById('mainTimer').style.display = 'none';
+                document.getElementById('countdown').style.display = 'block';
+                document.getElementById('countdownTime').textContent = timeLeft;
+            } else {
+                document.getElementById('mainTimer').style.display = 'block';
+                document.getElementById('countdown').style.display = 'none';
+                timerTitleElement.textContent = `${selectedTimer.name} - ${currentPhase === 'training' ? 'Entrenamiento' : 'Descanso'}`;
+                document.getElementById('repetitionCount').textContent = `${currentRepetition}/${totalRepetitions}`;
+            }
         }
 
         function toggleStartPause() {
@@ -258,10 +95,12 @@
                 const selectedTimer = timers.find(t => t.id === selectedTimerId);
                 totalRepetitions = selectedTimer.repetitions;
                 if (currentRepetition === 0) {
-                    currentRepetition = 1;
-                    currentPhase = 'training';
-                    timeLeft = selectedTimer.trainingTime;
+                    isPreparationPhase = true;
+                    timeLeft = selectedTimer.preparationTime;
+                } else {
+                    isPreparationPhase = false;
                 }
+
                 timerInterval = setInterval(() => {
                     if (timeLeft > 0) {
                         timeLeft--;
@@ -271,9 +110,21 @@
                         updateTimerDisplay();
                     } else {
                         beep(500, 1000, 0.7);
-                        if (currentPhase === 'training') {
-                            currentPhase = 'rest';
-                            timeLeft = selectedTimer.restTime;
+                        if (isPreparationPhase) {
+                            isPreparationPhase = false;
+                            currentRepetition = 1;
+                            currentPhase = 'training';
+                            timeLeft = selectedTimer.trainingTime;
+                        } else if (currentPhase === 'training') {
+                            if (currentRepetition < totalRepetitions) {
+                                currentPhase = 'rest';
+                                timeLeft = selectedTimer.restTime;
+                            } else {
+                                // Last repetition completed, end the timer
+                                pauseTimer();
+                                resetTimer();
+                                return;
+                            }
                         } else {
                             currentPhase = 'training';
                             currentRepetition++;
@@ -289,6 +140,7 @@
                     updateButtonStates();
                 }, 1000);
                 updateButtonStates();
+                keepScreenAwake();
             }
         }
 
@@ -302,10 +154,17 @@
             pauseTimer();
             currentRepetition = 0;
             currentPhase = 'training';
+            isPreparationPhase = false;
             if (selectedTimerId !== null) {
-                timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+                const selectedTimer = timers.find(t => t.id === selectedTimerId);
+                timeLeft = selectedTimer.preparationTime;
+                isPreparationPhase = true;
+                document.getElementById('countdown').style.display = 'block';
+                document.getElementById('mainTimer').style.display = 'none';
             } else {
                 timeLeft = 0;
+                document.getElementById('countdown').style.display = 'none';
+                document.getElementById('mainTimer').style.display = 'block';
             }
             updateTimerDisplay();
         }
@@ -314,15 +173,24 @@
             const name = newTimerName.value.trim();
             const trainingTime = parseInt(newTimerTrainingTime.value, 10);
             const restTime = parseInt(newTimerRestTime.value, 10);
+            const preparationTime = parseInt(newTimerPreparationTime.value, 10);
 
             if (name && trainingTime > 0 && restTime > 0) {
                 const newId = timers.length > 0 ? Math.max(...timers.map(t => t.id)) + 1 : 1;
-                const newTimer = { id: newId, name, trainingTime, restTime, repetitions: 1 };
+                const newTimer = { 
+                    id: newId, 
+                    name, 
+                    trainingTime, 
+                    restTime, 
+                    repetitions: 1, 
+                    preparationTime 
+                };
                 timers.push(newTimer);
                 renderTimerList();
                 newTimerName.value = '';
                 newTimerTrainingTime.value = '60';
                 newTimerRestTime.value = '40';
+                newTimerPreparationTime.value = '10';
                 saveTimersToLocalStorage(); // Save after adding a timer
             } else {
                 alert('Por favor, ingrese un nombre válido y tiempos mayores que 0.');
@@ -352,6 +220,8 @@
                         <span>seg. entrenamiento</span>
                         <input type="number" value="${timer.restTime}" min="1" max="3600" class="timerRestTime">
                         <span>seg. descanso</span>
+                        <input type="number" value="${timer.preparationTime}" min="0" max="60" class="timerPreparationTime">
+                        <span>seg. preparación</span>
                         <input type="number" value="${timer.repetitions}" min="1" max="100" class="timerRepetitions">
                         <span>repeticiones</span>
                         <span class="remove-timer">❌</span>
@@ -361,7 +231,9 @@
                     if (!e.target.classList.contains('timerName') && 
                         !e.target.classList.contains('timerTrainingTime') && 
                         !e.target.classList.contains('timerRestTime') &&
-                        !e.target.classList.contains('timerRepetitions')) {
+                        !e.target.classList.contains('timerRepetitions') &&
+                        !e.target.classList.contains('timerPreparationTime') &&
+                        !e.target.classList.contains('remove-timer')) {
                         selectTimer(timer.id);
                     }
                 });
@@ -371,11 +243,20 @@
         }
 
         function selectTimer(id) {
+            if (id === selectedTimerId && isRunning) {
+                return;
+            }
+
+            if (isRunning) {
+                pauseTimer();
+            }
+
             selectedTimerId = id;
             const selectedTimer = timers.find(t => t.id === id);
-            timeLeft = selectedTimer.trainingTime;
+            timeLeft = selectedTimer.preparationTime;
             currentPhase = 'training';
             currentRepetition = 0;
+            isPreparationPhase = true;
             updateTimerDisplay();
             renderTimerList();
             updateButtonStates();
@@ -391,10 +272,12 @@
                     timer.trainingTime = parseInt(item.querySelector('.timerTrainingTime').value, 10);
                     timer.restTime = parseInt(item.querySelector('.timerRestTime').value, 10);
                     timer.repetitions = parseInt(item.querySelector('.timerRepetitions').value, 10);
+                    timer.preparationTime = parseInt(item.querySelector('.timerPreparationTime').value, 10);
                 }
             });
             if (!isRunning && selectedTimerId !== null) {
-                timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+                const selectedTimer = timers.find(t => t.id === selectedTimerId);
+                timeLeft = isPreparationPhase ? selectedTimer.preparationTime : selectedTimer.trainingTime;
                 updateTimerDisplay();
             }
             saveTimersToLocalStorage(); // Save after updating timers
@@ -417,6 +300,7 @@
         }
 
         function goToPreviousPhase() {
+            if (isPreparationPhase) return; // Don't allow going back from preparation phase
             if (currentRepetition > 1 || (currentRepetition === 1 && currentPhase === 'rest')) {
                 if (currentPhase === 'training') {
                     currentRepetition--;
@@ -432,8 +316,17 @@
         }
 
         function goToNextPhase() {
+            if (isPreparationPhase) {
+                isPreparationPhase = false;
+                currentPhase = 'training';
+                currentRepetition = 1;
+                timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+                updateTimerDisplay();
+                updateButtonStates();
+                return;
+            }
             const selectedTimer = timers.find(t => t.id === selectedTimerId);
-            if (currentRepetition < selectedTimer.repetitions || (currentRepetition === selectedTimer.repetitions && currentPhase === 'training')) {
+            if (currentRepetition < selectedTimer.repetitions) {
                 if (currentPhase === 'training') {
                     currentPhase = 'rest';
                     timeLeft = selectedTimer.restTime;
@@ -442,9 +335,12 @@
                     currentRepetition++;
                     timeLeft = selectedTimer.trainingTime;
                 }
-                updateTimerDisplay();
-                updateButtonStates();
+            } else if (currentRepetition === selectedTimer.repetitions && currentPhase === 'training') {
+                // Last repetition completed, end the timer
+                resetTimer();
             }
+            updateTimerDisplay();
+            updateButtonStates();
         }
 
         function updateButtonStates() {
@@ -455,8 +351,8 @@
             resetBtn.disabled = !timerSelected;
             startPauseBtn.textContent = isRunning ? 'Pausar' : 'Iniciar';
             
-            previousBtn.disabled = !timerSelected || (currentRepetition === 1 && currentPhase === 'training');
-            nextBtn.disabled = !timerSelected || (currentRepetition === selectedTimer?.repetitions && currentPhase === 'rest');
+            previousBtn.disabled = !timerSelected || isPreparationPhase || (currentRepetition === 1 && currentPhase === 'training');
+            nextBtn.disabled = !timerSelected || (currentRepetition === selectedTimer?.repetitions && currentPhase === 'rest' && !isPreparationPhase);
         }
 
         darkModeToggle.addEventListener('click', toggleDarkMode);
@@ -468,7 +364,7 @@
         clearAllTimersBtn.addEventListener('click', clearAllTimers);
 
         timerItems.addEventListener('input', (e) => {
-            if (e.target.classList.contains('timerTrainingTime') || e.target.classList.contains('timerRestTime') || e.target.classList.contains('timerName') || e.target.classList.contains('timerRepetitions')) {
+            if (e.target.classList.contains('timerTrainingTime') || e.target.classList.contains('timerRestTime') || e.target.classList.contains('timerName') || e.target.classList.contains('timerRepetitions') || e.target.classList.contains('timerPreparationTime')) {
                 updateTimersFromInputs();
             }
         });
@@ -487,49 +383,55 @@
 
         loadTimersFromLocalStorage(); // Load timers on page load
         updateTimerDisplay();
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').then(registration => {
-              console.log('Service Worker registrado con éxito:', registration);
-      
-              // Si ya hay un SW en estado de "waiting", lo actualiza inmediatamente
-              if (registration.waiting) {
+        function keepScreenAwake() {
+            if ('wakeLock' in navigator) {
+                navigator.wakeLock.request('screen').then(lock => {
+                    lock.addEventListener('release', () => {
+                        console.log('Screen Wake Lock released');
+                    });
+                }).catch(err => {
+                    console.error(`${err.name}, ${err.message}`);
+                });
+            }
+        }</script><script>if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').then(registration => {
+        console.log('Service Worker registrado con éxito:', registration);
+
+        // Si ya hay un SW en estado de "waiting", lo actualiza inmediatamente
+        if (registration.waiting) {
+          updateServiceWorker(registration);
+        }
+
+        // Escucha si hay una nueva versión del SW
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                // Si hay un nuevo SW, muestra mensaje o actualiza
                 updateServiceWorker(registration);
               }
-      
-              // Escucha si hay una nueva versión del SW
-              registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                  if (newWorker.state === 'installed') {
-                    if (navigator.serviceWorker.controller) {
-                      // Si hay un nuevo SW, muestra mensaje o actualiza
-                      updateServiceWorker(registration);
-                    }
-                  }
-                });
-              });
-            }).catch(error => {
-              console.log('Error en el registro del Service Worker:', error);
-            });
-          });
-      
-          // Recarga la página cuando el SW cambia
-          let refreshing;
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (!refreshing) {
-              window.location.reload();
-              refreshing = true;
             }
           });
-        }
-      
-        function updateServiceWorker(registration) {
-          if (confirm('Nueva versión disponible. ¿Actualizar ahora?')) {
-            registration.waiting.postMessage({ action: 'skipWaiting' });
-          }
-        }
-      </script>         
-</body></html>
+        });
+      }).catch(error => {
+        console.log('Error en el registro del Service Worker:', error);
+      });
+    });
+
+    // Recarga la página cuando el SW cambia
+    let refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        window.location.reload();
+        refreshing = true;
+      }
+    });
+  }
+
+  function updateServiceWorker(registration) {
+    if (confirm('Nueva versión disponible. ¿Actualizar ahora?')) {
+      registration.waiting.postMessage({ action: 'skipWaiting' });
+    }
+  }</script></body></html>
