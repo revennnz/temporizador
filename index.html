@@ -1,1 +1,490 @@
+<!DOCTYPE html><html><head><base href="https://temporizador.pages.dev/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" sizes="192x192" href="https://i.imgur.com/St2wFsJ.png" type="image/x-icon"/>
+    <link rel="shortcut icon" href="https://i.imgur.com/St2wFsJ.png" type="image/x-icon"/>
+    <link rel="apple-touch-icon" href="https://i.imgur.com/St2wFsJ.png" type="image/x-icon"/>
+    <link rel="manifest" href="manifest.json">
+    <title>Temporizador de Entrenamiento Personalizado</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    body.dark-mode {
+        background-color: #222;
+        color: #fff;
+    }
+    .timer-container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: background-color 0.3s, color 0.3s;
+        max-width: 600px;
+        width: 100%;
+    }
+    .dark-mode .timer-container {
+        background-color: #333;
+        color: #fff;
+    }
+    .timer {
+        font-size: 48px;
+        margin: 20px 0;
+    }
+    .controls button {
+        font-size: 16px;
+        padding: 10px 20px;
+        margin: 0 5px;
+        cursor: pointer;
+        min-width: 100px; /* Ensure consistent button width */
+    }
+    .timer-list {
+        margin-top: 20px;
+        width: 100%;
+    }
+    .timer-item {
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        text-align: left;
+    }
+    .timer-item.selected {
+        background-color: #d0d0d0;
+    }
+    .dark-mode .timer-item {
+        background-color: #444;
+    }
+    .dark-mode .timer-item.selected {
+        background-color: #555;
+    }
+    .timer-item-controls {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+    .timer-item-controls input {
+        width: 80px;
+        margin: 5px;
+    }
+    .add-timer {
+        margin-top: 10px;
+    }
+    #darkModeToggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .timer-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    .remove-timer {
+        color: red;
+        cursor: pointer;
+    }
+    .repetition-count {
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    .add-timer-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .add-timer-form input {
+        margin: 5px;
+        padding: 5px;
+    }
+    #clearAllTimersBtn {
+        margin-top: 10px;
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #clearAllTimersBtn:hover {
+        background-color: #cc0000;
+    }
+</style></head><body>
+    <div id="darkModeToggle">🌓</div>
+    <div class="timer-container">
+        <h1>Temporizador Entrenamientos</h1>
+        <div class="timer-title" id="timerTitle">Sin temporizador seleccionado</div>
+        <div class="timer" id="timer">00:00</div>
+        <div class="repetition-count" id="repetitionCount">0/0</div>
+        <div class="controls">
+            <button id="previousBtn" disabled="">Anterior</button>
+            <button id="startPauseBtn" disabled="">Iniciar</button>
+            <button id="nextBtn" disabled="">Siguiente</button>
+            <button id="resetBtn" disabled="">Reiniciar</button>
+        </div>
+        <button id="clearAllTimersBtn">Borrar Todos los Temporizadores</button>
+        <div class="timer-list" id="timerList">
+            <h2>Temporizers</h2>
+            <div id="timerItems"></div>
+        </div>
+        <div class="add-timer-form">
+            <input type="text" id="newTimerName" placeholder="Nombre del temporizador">
+            <input type="number" id="newTimerTrainingTime" placeholder="Tiempo de entrenamiento (seg)" value="60">
+            <input type="number" id="newTimerRestTime" placeholder="Tiempo de descanso (seg)" value="40">
+            <button id="addTimerBtn">Agregar Temporizador</button>
+        </div>
+    </div>
 
+    <script>
+        let timers = [];
+        let selectedTimerId = null;
+        let timeLeft = 0;
+        let timerInterval;
+        let isRunning = false;
+        let currentRepetition = 0;
+        let totalRepetitions = 1;
+        let currentPhase = 'training';
+
+        const timerElement = document.getElementById('timer');
+        const timerTitleElement = document.getElementById('timerTitle');
+        const startPauseBtn = document.getElementById('startPauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const addTimerBtn = document.getElementById('addTimerBtn');
+        const timerItems = document.getElementById('timerItems');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const newTimerName = document.getElementById('newTimerName');
+        const newTimerTrainingTime = document.getElementById('newTimerTrainingTime');
+        const newTimerRestTime = document.getElementById('newTimerRestTime');
+        const clearAllTimersBtn = document.getElementById('clearAllTimersBtn');
+        const previousBtn = document.getElementById('previousBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function beep(duration, frequency, volume){
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            gainNode.gain.value = volume;
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), duration);
+        }
+
+        function saveTimersToLocalStorage() {
+            localStorage.setItem('customTimers', JSON.stringify(timers));
+        }
+
+        function loadTimersFromLocalStorage() {
+            const savedTimers = localStorage.getItem('customTimers');
+            if (savedTimers) {
+                timers = JSON.parse(savedTimers);
+                renderTimerList();
+            }
+        }
+
+        function updateTimerDisplay() {
+            if (selectedTimerId === null) {
+                timerElement.textContent = '00:00';
+                timerTitleElement.textContent = 'Sin temporizador seleccionado';
+                document.getElementById('repetitionCount').textContent = '0/0';
+                return;
+            }
+
+            const selectedTimer = timers.find(t => t.id === selectedTimerId);
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerTitleElement.textContent = `${selectedTimer.name} - ${currentPhase === 'training' ? 'Entrenamiento' : 'Descanso'}`;
+            document.getElementById('repetitionCount').textContent = `${currentRepetition}/${totalRepetitions}`;
+        }
+
+        function toggleStartPause() {
+            if (isRunning) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+            updateButtonStates();
+        }
+
+        function startTimer() {
+            if (!isRunning && selectedTimerId !== null) {
+                isRunning = true;
+                const selectedTimer = timers.find(t => t.id === selectedTimerId);
+                totalRepetitions = selectedTimer.repetitions;
+                if (currentRepetition === 0) {
+                    currentRepetition = 1;
+                    currentPhase = 'training';
+                    timeLeft = selectedTimer.trainingTime;
+                }
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        if (timeLeft <= 3) {
+                            beep(200, 800, 0.5);
+                        }
+                        updateTimerDisplay();
+                    } else {
+                        beep(500, 1000, 0.7);
+                        if (currentPhase === 'training') {
+                            currentPhase = 'rest';
+                            timeLeft = selectedTimer.restTime;
+                        } else {
+                            currentPhase = 'training';
+                            currentRepetition++;
+                            if (currentRepetition > totalRepetitions) {
+                                pauseTimer();
+                                resetTimer();
+                                return;
+                            }
+                            timeLeft = selectedTimer.trainingTime;
+                        }
+                        updateTimerDisplay();
+                    }
+                    updateButtonStates();
+                }, 1000);
+                updateButtonStates();
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            updateButtonStates();
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            currentRepetition = 0;
+            currentPhase = 'training';
+            if (selectedTimerId !== null) {
+                timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+            } else {
+                timeLeft = 0;
+            }
+            updateTimerDisplay();
+        }
+
+        function addTimer() {
+            const name = newTimerName.value.trim();
+            const trainingTime = parseInt(newTimerTrainingTime.value, 10);
+            const restTime = parseInt(newTimerRestTime.value, 10);
+
+            if (name && trainingTime > 0 && restTime > 0) {
+                const newId = timers.length > 0 ? Math.max(...timers.map(t => t.id)) + 1 : 1;
+                const newTimer = { id: newId, name, trainingTime, restTime, repetitions: 1 };
+                timers.push(newTimer);
+                renderTimerList();
+                newTimerName.value = '';
+                newTimerTrainingTime.value = '60';
+                newTimerRestTime.value = '40';
+                saveTimersToLocalStorage(); // Save after adding a timer
+            } else {
+                alert('Por favor, ingrese un nombre válido y tiempos mayores que 0.');
+            }
+        }
+
+        function clearAllTimers() {
+            if (confirm('¿Está seguro de que desea borrar todos los temporizadores?')) {
+                timers = [];
+                selectedTimerId = null;
+                resetTimer();
+                renderTimerList();
+                saveTimersToLocalStorage();
+            }
+        }
+
+        function renderTimerList() {
+            timerItems.innerHTML = '';
+            timers.forEach(timer => {
+                const timerItem = document.createElement('div');
+                timerItem.className = `timer-item ${timer.id === selectedTimerId ? 'selected' : ''}`;
+                timerItem.innerHTML = `
+                    <div>${timer.name}</div>
+                    <div class="timer-item-controls">
+                        <input type="text" value="${timer.name}" class="timerName" data-id="${timer.id}">
+                        <input type="number" value="${timer.trainingTime}" min="1" max="3600" class="timerTrainingTime">
+                        <span>seg. entrenamiento</span>
+                        <input type="number" value="${timer.restTime}" min="1" max="3600" class="timerRestTime">
+                        <span>seg. descanso</span>
+                        <input type="number" value="${timer.repetitions}" min="1" max="100" class="timerRepetitions">
+                        <span>repeticiones</span>
+                        <span class="remove-timer">❌</span>
+                    </div>
+                `;
+                timerItem.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('timerName') && 
+                        !e.target.classList.contains('timerTrainingTime') && 
+                        !e.target.classList.contains('timerRestTime') &&
+                        !e.target.classList.contains('timerRepetitions')) {
+                        selectTimer(timer.id);
+                    }
+                });
+                timerItems.appendChild(timerItem);
+            });
+            updateButtonStates();
+        }
+
+        function selectTimer(id) {
+            selectedTimerId = id;
+            const selectedTimer = timers.find(t => t.id === id);
+            timeLeft = selectedTimer.trainingTime;
+            currentPhase = 'training';
+            currentRepetition = 0;
+            updateTimerDisplay();
+            renderTimerList();
+            updateButtonStates();
+        }
+
+        function updateTimersFromInputs() {
+            const timerInputs = document.querySelectorAll('.timer-item');
+            timerInputs.forEach(item => {
+                const id = parseInt(item.querySelector('.timerName').dataset.id);
+                const timer = timers.find(t => t.id === id);
+                if (timer) {
+                    timer.name = item.querySelector('.timerName').value;
+                    timer.trainingTime = parseInt(item.querySelector('.timerTrainingTime').value, 10);
+                    timer.restTime = parseInt(item.querySelector('.timerRestTime').value, 10);
+                    timer.repetitions = parseInt(item.querySelector('.timerRepetitions').value, 10);
+                }
+            });
+            if (!isRunning && selectedTimerId !== null) {
+                timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+                updateTimerDisplay();
+            }
+            saveTimersToLocalStorage(); // Save after updating timers
+        }
+
+        function removeTimer(id) {
+            timers = timers.filter(t => t.id !== id);
+            if (selectedTimerId === id) {
+                selectedTimerId = null;
+                resetTimer();
+            }
+            renderTimerList();
+            updateButtonStates();
+            saveTimersToLocalStorage(); // Save after removing a timer
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function goToPreviousPhase() {
+            if (currentRepetition > 1 || (currentRepetition === 1 && currentPhase === 'rest')) {
+                if (currentPhase === 'training') {
+                    currentRepetition--;
+                    currentPhase = 'rest';
+                    timeLeft = timers.find(t => t.id === selectedTimerId).restTime;
+                } else {
+                    currentPhase = 'training';
+                    timeLeft = timers.find(t => t.id === selectedTimerId).trainingTime;
+                }
+                updateTimerDisplay();
+                updateButtonStates();
+            }
+        }
+
+        function goToNextPhase() {
+            const selectedTimer = timers.find(t => t.id === selectedTimerId);
+            if (currentRepetition < selectedTimer.repetitions || (currentRepetition === selectedTimer.repetitions && currentPhase === 'training')) {
+                if (currentPhase === 'training') {
+                    currentPhase = 'rest';
+                    timeLeft = selectedTimer.restTime;
+                } else {
+                    currentPhase = 'training';
+                    currentRepetition++;
+                    timeLeft = selectedTimer.trainingTime;
+                }
+                updateTimerDisplay();
+                updateButtonStates();
+            }
+        }
+
+        function updateButtonStates() {
+            const timerSelected = selectedTimerId !== null;
+            const selectedTimer = timerSelected ? timers.find(t => t.id === selectedTimerId) : null;
+            
+            startPauseBtn.disabled = !timerSelected;
+            resetBtn.disabled = !timerSelected;
+            startPauseBtn.textContent = isRunning ? 'Pausar' : 'Iniciar';
+            
+            previousBtn.disabled = !timerSelected || (currentRepetition === 1 && currentPhase === 'training');
+            nextBtn.disabled = !timerSelected || (currentRepetition === selectedTimer?.repetitions && currentPhase === 'rest');
+        }
+
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+        previousBtn.addEventListener('click', goToPreviousPhase);
+        nextBtn.addEventListener('click', goToNextPhase);
+        startPauseBtn.addEventListener('click', toggleStartPause);
+        resetBtn.addEventListener('click', resetTimer);
+        addTimerBtn.addEventListener('click', addTimer);
+        clearAllTimersBtn.addEventListener('click', clearAllTimers);
+
+        timerItems.addEventListener('input', (e) => {
+            if (e.target.classList.contains('timerTrainingTime') || e.target.classList.contains('timerRestTime') || e.target.classList.contains('timerName') || e.target.classList.contains('timerRepetitions')) {
+                updateTimersFromInputs();
+            }
+        });
+
+        timerItems.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-timer')) {
+                const timerItem = e.target.closest('.timer-item');
+                const id = parseInt(timerItem.querySelector('.timerName').dataset.id);
+                removeTimer(id);
+            }
+        });
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        loadTimersFromLocalStorage(); // Load timers on page load
+        updateTimerDisplay();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registrado con éxito:', registration.scope);
+                    // Escuchar actualizaciones del service worker
+                    registration.onupdatefound = () => {
+                        const installingWorker = registration.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // Nueva versión disponible
+                                console.log('Nueva versión del Service Worker disponible. Actualizando...');
+                                window.location.reload(); // Recargar la página para obtener la nueva versión
+                            }
+                        };
+                    };
+                })
+                .catch((error) => {
+                    console.error('Error al registrar el Service Worker:', error);
+                });
+            });
+        }
+    </script>    
+</body></html>

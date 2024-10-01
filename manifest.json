@@ -1,0 +1,21 @@
+{
+  "name": "Temporizador de Entrenamientos",
+  "short_name": "Entrenador",
+  "start_url": "/",
+  "scope": "/",  // Define el alcance de la PWA (todo el sitio)
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://i.imgur.com/St2wFsJ.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://i.imgur.com/St2wFsJ.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
