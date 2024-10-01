@@ -1,10 +1,4 @@
-const CACHE_NAME = 'entrenamientos-cache-v2';
-const urlsToCache = [
-  '',
-  '/',
-  'manifest.json',
-  'https://i.imgur.com/St2wFsJ.png', // Ícono de la app
-const CACHE_NAME = 'temporizador-cache-v1'; 
+const CACHE_NAME = 'temporizador-cache-v3'; 
 const urlsToCache = [
   '',
   '/',
