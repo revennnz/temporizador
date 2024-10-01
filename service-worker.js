@@ -1,9 +1,9 @@
-const CACHE_NAME = 'entrenamiento-cache-v3'; 
+const CACHE_NAME = 'gym-cache-v7'; 
 const urlsToCache = [
   '',
   '/',
   'manifest.json', 
-  'https://i.imgur.com/St2wFsJ.png'
+  'https://i.imgur.com/St2wFsJ.png' // Ícono de la app
 ];
 
 // Instalación del Service Worker y almacenamiento en caché de los recursos
@@ -17,6 +17,7 @@ self.addEventListener('install', event => {
 
 // Interceptar las solicitudes de red para devolver contenido de la caché
 self.addEventListener('fetch', event => {
+  // Solo almacenaremos en caché respuestas para solicitudes GET
   if (event.request.method === 'GET') {
     event.respondWith(
       caches.match(event.request).then(response => {
@@ -24,7 +25,10 @@ self.addEventListener('fetch', event => {
           // Clonamos la respuesta para que podamos almacenarla en caché
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseClone); // Solo almacenamos respuestas GET
+            // Solo almacenamos respuestas de GET
+            if (event.request.method === 'GET') {
+              cache.put(event.request, responseClone);
+            }
           });
           return networkResponse; // Retornamos la respuesta de la red
         });
