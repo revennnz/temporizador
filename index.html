@@ -463,28 +463,30 @@
         loadTimersFromLocalStorage(); // Load timers on page load
         updateTimerDisplay();
     </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                .then((registration) => {
-                    console.log('Service Worker registrado con éxito:', registration.scope);
-                    // Escuchar actualizaciones del service worker
-                    registration.onupdatefound = () => {
-                        const installingWorker = registration.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // Nueva versión disponible
-                                console.log('Nueva versión del Service Worker disponible. Actualizando...');
-                                window.location.reload(); // Recargar la página para obtener la nueva versión
+<script>
+    // Registro del Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js').then(reg => {
+                console.log('Service Worker registrado:', reg);
+                
+                // Notificación de nueva versión
+                reg.onupdatefound = () => {
+                    const newWorker = reg.installing;
+                    newWorker.onstatechange = () => {
+                        if (newWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // Hay una nueva versión disponible
+                                console.log('Nueva versión disponible. Recarga la página para actualizar.');
+                                // Aquí podrías mostrar una notificación al usuario
                             }
-                        };
+                        }
                     };
-                })
-                .catch((error) => {
-                    console.error('Error al registrar el Service Worker:', error);
-                });
+                };
+            }).catch(err => {
+                console.error('Error al registrar el Service Worker:', err);
             });
-        }
-    </script>    
+        });
+    }
+</script> 
 </body></html>
