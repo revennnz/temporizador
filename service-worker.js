@@ -1,9 +1,9 @@
-const CACHE_NAME = 'gym-cache-v7'; 
+const CACHE_NAME = 'gym-cache-v3'; 
 const urlsToCache = [
   '',
   '/',
   'manifest.json', 
-  'https://i.imgur.com/St2wFsJ.png' // Ícono de la app
+  'https://i.imgur.com/St2wFsJ.png'
 ];
 
 // Instalación del Service Worker y almacenamiento en caché de los recursos
@@ -17,27 +17,20 @@ self.addEventListener('install', event => {
 
 // Interceptar las solicitudes de red para devolver contenido de la caché
 self.addEventListener('fetch', event => {
-  // Solo almacenaremos en caché respuestas para solicitudes GET
-  if (event.request.method === 'GET') {
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request).then(networkResponse => {
-          // Clonamos la respuesta para que podamos almacenarla en caché
-          const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            // Solo almacenamos respuestas de GET
-            if (event.request.method === 'GET') {
-              cache.put(event.request, responseClone);
-            }
-          });
-          return networkResponse; // Retornamos la respuesta de la red
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      // Si hay una respuesta en caché, devuélvela; de lo contrario, haz la solicitud de red
+      return response || fetch(event.request).then(networkResponse => {
+        // Clona la respuesta porque se puede consumir solo una vez
+        const responseClone = networkResponse.clone();
+        // Abre el caché y almacena la respuesta en caché
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
         });
-      })
-    );
-  } else {
-    // Para otros métodos (como POST), simplemente hacemos la solicitud
-    event.respondWith(fetch(event.request));
-  }
+        return networkResponse;
+      });
+    })
+  );
 });
 
 // Actualizar el caché cuando hay nuevos recursos
