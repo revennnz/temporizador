@@ -1,9 +1,9 @@
-const CACHE_NAME = 'gym-cache-v3'; 
+const CACHE_NAME = 'gym-cache-v4'; 
 const urlsToCache = [
   '',
   '/',
   'manifest.json', 
-  'https://i.imgur.com/St2wFsJ.png'
+  'https://i.imgur.com/St2wFsJ.png' // Ícono de la app
 ];
 
 // Instalación del Service Worker y almacenamiento en caché de los recursos
