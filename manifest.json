@@ -2,7 +2,7 @@
   "name": "Temporizador de Entrenamientos",
   "short_name": "Entrenador",
   "start_url": "/",
-  "scope": "/",  // Define el alcance de la PWA (todo el sitio)
+  "scope": "/", 
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#ffffff",
