@@ -6,7 +6,7 @@ if (workbox) {
 
   // Precaching de toda la página: `/`, etc.
   workbox.precaching.precacheAndRoute([
-    { url: '/', revision: '4' },  // Cambia la revisión al modificar el archivo
+    { url: '/', revision: '5' },  // Cambia la revisión al modificar el archivo
     { url: 'manifest.json', revision: '1' },
     // Agrega aquí más archivos si los tienes, pero solo si son archivos estáticos, como iconos, logos, etc.
     // { url: '/styles.css', revision: '1' },

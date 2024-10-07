@@ -135,6 +135,40 @@
             document.getElementById('timerList').style.display = 'block';
             updateClearAllTimersButtonVisibility();
             renderTimerList();
+
+            // Deselect the timer and stop it if it's running
+            if (selectedTimerId !== null) {
+                if (isRunning) {
+                    pauseTimer();
+                }
+                selectedTimerId = null;
+                resetTimer();
+                updateTimerDisplay();
+                updateButtonStates();
+            }
+        }
+
+        function selectTimer(id) {
+            if (id === selectedTimerId) {
+                if (isRunning) {
+                    pauseTimer();
+                }
+                return;
+            }
+
+            if (isRunning) {
+                pauseTimer();
+            }
+
+            selectedTimerId = id;
+            const selectedTimer = timers.find(t => t.id === id);
+            timeLeft = selectedTimer.preparationTime;
+            currentPhase = 'training';
+            currentRepetition = 0;
+            isPreparationPhase = true;
+            updateTimerDisplay();
+            renderTimerList();
+            updateButtonStates();
         }
 
         function updateTimersFromInputs() {
@@ -252,11 +286,11 @@
                 isRunning = true;
                 const selectedTimer = timers.find(t => t.id === selectedTimerId);
                 totalRepetitions = selectedTimer.repetitions;
-                if (currentRepetition === 0) {
+                
+                // Only set initial values if we're starting from the beginning
+                if (currentRepetition === 0 && !isPreparationPhase) {
                     isPreparationPhase = true;
                     timeLeft = selectedTimer.preparationTime;
-                } else {
-                    isPreparationPhase = false;
                 }
 
                 timerInterval = setInterval(() => {
@@ -369,7 +403,10 @@
         }
 
         function selectTimer(id) {
-            if (id === selectedTimerId && isRunning) {
+            if (id === selectedTimerId) {
+                if (isRunning) {
+                    pauseTimer();
+                }
                 return;
             }
 
